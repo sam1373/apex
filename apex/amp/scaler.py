@@ -44,6 +44,7 @@ class LossScaler(object):
         if loss_scale == "dynamic":
             self.dynamic = True
             self._loss_scale = init_scale
+            self._min_scale = 1.
         else:
             self.dynamic = False
             self._loss_scale = loss_scale
@@ -191,7 +192,9 @@ class LossScaler(object):
 
         if self._has_overflow and self.dynamic:
             should_skip = True
-            self._loss_scale /= 2.
+            new_scale = self._loss_scale / 2.
+            if new_scale >= self._min_scale:
+                self._loss_scale = new_scale
             self._unskipped = 0
         else:
             should_skip = False
