@@ -38,9 +38,9 @@ class LossScaler(object):
 
     def __init__(self,
                  loss_scale,
-                 init_scale=2.**16,
+                 init_scale=1.,
                  scale_factor=2.,
-                 scale_window=2000):
+                 scale_window=20000):
         if loss_scale == "dynamic":
             self.dynamic = True
             self._loss_scale = init_scale
@@ -48,7 +48,7 @@ class LossScaler(object):
         else:
             self.dynamic = False
             self._loss_scale = loss_scale
-        self._max_loss_scale = 2.**24
+        self._max_loss_scale = 2.**14
         self._scale_seq_len = scale_window
         self._unskipped = 0
         self._has_overflow = False
